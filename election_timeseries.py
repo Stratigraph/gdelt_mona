@@ -20,11 +20,11 @@ df['DATE'] = pd.to_datetime(df['DATE'], format='%Y%m%d%H%M%S')
 #set index to datetimes
 df = df.set_index(df['DATE'], drop=False)
 
-#select specific source locations:
+#select specific source locations or comment out for whole dataset:
 location = 'GM'
 df = df[df.source_location == location]
 
-#Order mfts inside df
+#Order mfts inside df, has to be adjustet for different column counts
 cols = df.columns.tolist()
 mft_cols = cols[17:28]
 cols = cols[:17] + [cols[17]] + cols[20:28] + [cols[18]] + [cols[19]] + cols[28:]
@@ -34,7 +34,7 @@ df = df[cols]
 mft_vars = ['c25.{}'.format(i) for i in range(1,12)]
 mft_names = ['HarmVirtue', 'HarmVice', 'FairnessVirtue', 'FairnessVice','IngroupVirtue', 'IngroupVice', 'AuthorityVirtue', 'AuthorityVice','PurityVirtue', 'PurityVice', 'MoralityGeneral']
 newcols = dict(zip(mft_vars, mft_names)) #create dictionary that contains new column names
-df.rename(columns=newcols, inplace=True)
+df.rename(columns=newcols, inplace=True) #rename the actual columns based on the dict
 
 #Calculate the mean for each day
 df = df.resample("1d").sum().fillna(0).rolling(window=1, min_periods=1).mean()
